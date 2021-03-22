@@ -12,6 +12,7 @@ public class PositionTrigger : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
+        print("PositionTrigger is called");
         if (_occupiedObject == null)
         {
             _selectionCircle.SetActive(true);

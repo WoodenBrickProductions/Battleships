@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = System.Object;
 
 public class BoatController : MonoBehaviour
 {
@@ -11,10 +12,12 @@ public class BoatController : MonoBehaviour
     private Vector3 _gridPosition;
     private Vector3 _startingPosition;
     private bool _movable;
-    private List<PositionTrigger> _obstacles;
+    private List<ObstacleTrigger> _obstacles;
+    [SerializeField] private int size = 1;
     
     private void OnTriggerEnter(Collider other)
     {
+        //TODO Set state in Boat Controller for PositionTrigger
         print("Boat OnTriggerEnter was called by " + other.gameObject.name);
         if (other.gameObject.tag == "Position")
         {
@@ -32,14 +35,18 @@ public class BoatController : MonoBehaviour
         {
             _gridPosition = _startingPosition;
         }
-}
+    }
 
     void Start()
     {
+        for (int i = 0; i < size - 1; i++)
+        {
+            _obstacles.Add(transform.GetChild(i).GetComponentInChildren<ObstacleTrigger>());
+        }
         _startingPosition = transform.position;
         _gridPosition = _startingPosition;
         _movable = true;
-        _obstacles = new List<PositionTrigger>();
+        _obstacles = new List<ObstacleTrigger>();
     }
 
     public bool IsMovable()
@@ -56,6 +63,15 @@ public class BoatController : MonoBehaviour
     {
         if (ChangedPosition())
         {
+            foreach (var obstacle in _obstacles)
+            {
+                if (obstacle.IsObstructed())
+                {
+                    _gridPosition = _startingPosition;
+                    transform.position = _gridPosition;
+                    return;
+                }
+            }
             _movable = false;
         }
         transform.position = _gridPosition;
