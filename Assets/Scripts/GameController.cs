@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public enum GameState
@@ -11,6 +12,7 @@ public class GameController : MonoBehaviour
 {
     private Plane _mousePlane = new Plane(Vector3.up, 0);
     [SerializeField] private GameState gameState;
+    [SerializeField] private AudioManager audioManager;
     private BoatController _selectedBoat;
     private int _selectableLayerMask;
     private List<BoatController> _placedBoats;
@@ -36,6 +38,19 @@ public class GameController : MonoBehaviour
                 ShipPlacement();
                 break;
             
+        }
+        
+        // Temporary
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, _selectableLayerMask))
+            {
+                audioManager.Play("Destruction");
+                Destroy(hit.collider.gameObject);
+            }
+
         }
     }
 
@@ -90,7 +105,12 @@ public class GameController : MonoBehaviour
         {
             if (_selectedBoat.ChangedPosition())
             {
+                audioManager.Play("Success");
                 _placedBoats.Add(_selectedBoat);
+            }
+            else
+            {
+                audioManager.Play("Gameover");
             }
             _selectedBoat.SnapToGridPosition();
             _selectedBoat = null;

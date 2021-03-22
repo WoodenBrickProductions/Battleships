@@ -4384,6 +4384,7 @@ GameObject:
   m_Component:
   - component: {fileID: 956971300}
   - component: {fileID: 956971299}
+  - component: {fileID: 956971301}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -4404,6 +4405,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameState: 0
+  audioManager: {fileID: 956971301}
 --- !u!4 &956971300
 Transform:
   m_ObjectHideFlags: 0
@@ -4418,6 +4420,44 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &956971301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956971298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbc4d33ac3e00e64d97cc1bb721892b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Attack
+    clip: {fileID: 8300000, guid: e8af168eb1f41724082a86e732304eac, type: 3}
+    volume: 0.2
+    pitch: 3
+    source: {fileID: 0}
+  - name: Destruction
+    clip: {fileID: 8300000, guid: 4a1b38df7c66bb646bee0517a56bb2c8, type: 3}
+    volume: 0.2
+    pitch: 2
+    source: {fileID: 0}
+  - name: Gameover
+    clip: {fileID: 8300000, guid: c506f8ac99a2fa443851cf3c0fc16b2a, type: 3}
+    volume: 0.2
+    pitch: 2.51
+    source: {fileID: 0}
+  - name: Success
+    clip: {fileID: 8300000, guid: b66b6afec27534b4eaffa57886336080, type: 3}
+    volume: 0.2
+    pitch: 3
+    source: {fileID: 0}
+  - name: Victory
+    clip: {fileID: 8300000, guid: b834cecd73e24af4c86118695ee64d8f, type: 3}
+    volume: 0.2
+    pitch: 3
+    source: {fileID: 0}
 --- !u!1001 &973164085
 PrefabInstance:
   m_ObjectHideFlags: 0
