@@ -5,21 +5,50 @@ using UnityEngine;
 
 public class ObstacleTrigger : MonoBehaviour
 {
-    [SerializeField] private bool obstructed;
+    private Dictionary<Collider, PositionTrigger> obstructions;
+    private PositionTrigger _currentPosition;
     
-    private void OnTriggerStay(Collider other)
+    private void Start()
     {
-        obstructed = true;
-        print("SOMETHING INSIDE Me");
+        obstructions = new Dictionary<Collider, PositionTrigger>();
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Position")
+        {
+            PositionTrigger position = other.GetComponentInChildren<PositionTrigger>();
+            if (position.IsOccupied())
+            {
+                obstructions.Add(other, position);
+            }
+            else
+            {
+                _currentPosition = position;
+                position.SetOccupied(this.gameObject);
+            }
+            print("SOMETHING INSIDE Me");
+        }
+    }
+
+    public int GetObstructionCount()
+    {
+        return obstructions.Count;
+    }
+    
     private void OnTriggerExit(Collider other)
     {
-        obstructed = false;
+        if (other.gameObject.tag == "Position")
+        {
+            if(obstructions.ContainsKey(other))
+            {
+                obstructions.Remove(other);
+            }
+        }
     }
 
     public bool IsObstructed()
     {
-        return obstructed;
+        return obstructions.Count != 0;
     }
 }

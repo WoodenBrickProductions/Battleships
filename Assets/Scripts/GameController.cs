@@ -80,6 +80,10 @@ public class GameController : MonoBehaviour
         if (Input.GetMouseButton(0) && _selectedBoat != null)
         {
             _selectedBoat.transform.position = GetWorldPositionFromScreen(Input.mousePosition);
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                _selectedBoat.transform.Rotate(0, 90, 0);
+            }
         }
 
         if (Input.GetMouseButtonUp(0) && _selectedBoat != null)

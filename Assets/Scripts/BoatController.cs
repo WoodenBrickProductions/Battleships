@@ -9,7 +9,7 @@ public class BoatController : MonoBehaviour
     // Start is called before the first frame update
 
 
-    private Vector3 _gridPosition;
+    [SerializeField] private Vector3 _gridPosition;
     private Vector3 _startingPosition;
     private bool _movable;
     private List<ObstacleTrigger> _obstacles;
@@ -24,6 +24,7 @@ public class BoatController : MonoBehaviour
             PositionTrigger position = other.GetComponentInChildren<PositionTrigger>();
             if (!position.IsOccupied())
             {
+                position.SetOccupied(this.gameObject);
                 _gridPosition = position.gameObject.transform.position;
             }
         }
@@ -39,6 +40,7 @@ public class BoatController : MonoBehaviour
 
     void Start()
     {
+        _obstacles = new List<ObstacleTrigger>();
         for (int i = 0; i < size - 1; i++)
         {
             _obstacles.Add(transform.GetChild(i).GetComponentInChildren<ObstacleTrigger>());
@@ -46,7 +48,6 @@ public class BoatController : MonoBehaviour
         _startingPosition = transform.position;
         _gridPosition = _startingPosition;
         _movable = true;
-        _obstacles = new List<ObstacleTrigger>();
     }
 
     public bool IsMovable()
@@ -61,17 +62,22 @@ public class BoatController : MonoBehaviour
 
     public void SnapToGridPosition()
     {
+        print("Changed position" + ChangedPosition());
         if (ChangedPosition())
         {
             foreach (var obstacle in _obstacles)
             {
+                print(obstacle.GetObstructionCount());
                 if (obstacle.IsObstructed())
                 {
                     _gridPosition = _startingPosition;
+                    print("Exiting");
+                    _movable = true;
                     transform.position = _gridPosition;
                     return;
                 }
             }
+            
             _movable = false;
         }
         transform.position = _gridPosition;

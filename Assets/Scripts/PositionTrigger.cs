@@ -13,10 +13,9 @@ public class PositionTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         print("PositionTrigger is called");
-        if (_occupiedObject == null)
+        if (_occupiedObject != null)
         {
             _selectionCircle.SetActive(true);
-            _occupiedObject = other.gameObject;
         }
     }
 
@@ -24,15 +23,21 @@ public class PositionTrigger : MonoBehaviour
     {
         if (other.gameObject.Equals(_occupiedObject))
         {
+            SetOccupied(null);
             _selectionCircle.SetActive(false);
-            _occupiedObject = null;
         }
     }
 
+    public void SetOccupied(GameObject gameObject)
+    {
+        _occupiedObject = gameObject;
+    }
+    
     public bool IsOccupied()
     {
         return _occupiedObject != null;
     }
+
     
     void Start()
     {
