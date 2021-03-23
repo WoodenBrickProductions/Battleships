@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace;
 using UnityEngine;
 using Object = System.Object;
 
-public class BoatController : MonoBehaviour
+public class BoatController : MonoBehaviour, IHittable
 {
     // Start is called before the first frame update
 
@@ -14,6 +15,7 @@ public class BoatController : MonoBehaviour
     private bool _movable;
     private List<ObstacleTrigger> _obstacles;
     [SerializeField] private int size = 1;
+    [SerializeField] private bool hit = false;
     
     private void OnTriggerEnter(Collider other)
     {
@@ -87,5 +89,33 @@ public class BoatController : MonoBehaviour
     {
         transform.position = _startingPosition;
         _movable = true;
+    }
+
+    public bool IsDestroyed()
+    {
+        if (hit)
+        {
+            foreach (var obstacle in _obstacles)
+            {
+                if (!obstacle.IsHit())
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+    
+    public bool IsHit()
+    {
+        return hit;
+    }
+
+    public void Hit()
+    {
+        hit = true;
     }
 }

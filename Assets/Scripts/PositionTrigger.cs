@@ -12,11 +12,8 @@ public class PositionTrigger : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        print("PositionTrigger is called");
-        if (_occupiedObject != null)
-        {
-            _selectionCircle.SetActive(true);
-        }
+        print(gameObject + " PositionTrigger is called, entered: " + other.gameObject + " " + IsOccupied());
+        _selectionCircle.SetActive(true);
     }
 
     private void OnTriggerExit(Collider other)

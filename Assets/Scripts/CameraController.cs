@@ -14,6 +14,7 @@ public class CameraController : MonoBehaviour
     private Vector3 _targetLocation;
     private float _factor;
     private bool _moving = false;
+    private bool changeCamera = false;
     private void Start()
     {
         _targetLocation = playerBoardPosition;
@@ -21,19 +22,21 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !_moving)
+        if (changeCamera && !_moving)
         {
             if (transform.position == playerBoardPosition)
             {
                 _targetLocation = enemyBoardPosition;
                 _distanceToLocation = (_targetLocation - transform.position).magnitude;
                 _moving = true;
+                changeCamera = false;
             }
             else
             {
                 _targetLocation = playerBoardPosition;
                 _distanceToLocation = (_targetLocation - transform.position).magnitude;
                 _moving = true;
+                changeCamera = false;
             }
         }
 
@@ -49,5 +52,10 @@ public class CameraController : MonoBehaviour
             _moving = false;
         }
 
+    }
+
+    public void ChangeCameraPosition()
+    {
+        changeCamera = true;
     }
 }

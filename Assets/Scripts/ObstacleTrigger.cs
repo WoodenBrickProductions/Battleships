@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.Collections.Generic;using DefaultNamespace;
 using UnityEngine;
 
-public class ObstacleTrigger : MonoBehaviour
+public class ObstacleTrigger : MonoBehaviour, IHittable
 {
     private Dictionary<Collider, PositionTrigger> obstructions;
     private PositionTrigger _currentPosition;
+    [SerializeField] private int count;
+    [SerializeField] private bool hit = false;
     
     private void Start()
     {
         obstructions = new Dictionary<Collider, PositionTrigger>();
+        count = obstructions.Count;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -28,6 +31,8 @@ public class ObstacleTrigger : MonoBehaviour
                 position.SetOccupied(this.gameObject);
             }
             print("SOMETHING INSIDE Me");
+            count = obstructions.Count;
+
         }
     }
 
@@ -44,9 +49,20 @@ public class ObstacleTrigger : MonoBehaviour
             {
                 obstructions.Remove(other);
             }
+            count = obstructions.Count;
         }
     }
 
+    public void Hit()
+    {
+        hit = true;
+    }
+    
+    public bool IsHit()
+    {
+        return hit;
+    }
+    
     public bool IsObstructed()
     {
         return obstructions.Count != 0;
