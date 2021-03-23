@@ -59,6 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   count: 0
+  hit: 0
 --- !u!54 &1964394519164606643
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -134,6 +135,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   count: 0
+  hit: 0
 --- !u!54 &3966132908023562510
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -230,6 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gridPosition: {x: 0, y: 0, z: 0}
   size: 4
+  hit: 0
 --- !u!1 &9158656703946172053
 GameObject:
   m_ObjectHideFlags: 0
@@ -289,6 +292,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   count: 0
+  hit: 0
 --- !u!54 &6566909377725801951
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -367,6 +371,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: fab41a385304df74a983aaee61fe80d5,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5294cd18f22aebf40a25b5d410f653c0, type: 2}
     - target: {fileID: 919132149155446097, guid: fab41a385304df74a983aaee61fe80d5,
         type: 3}
       propertyPath: m_Name

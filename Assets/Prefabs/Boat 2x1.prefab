@@ -59,6 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   count: 0
+  hit: 0
 --- !u!54 &3455252422301225468
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -153,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gridPosition: {x: 0, y: 0, z: 0}
   size: 2
+  hit: 0
 --- !u!1001 &819316311751812800
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -215,6 +217,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 5e9581cfaafbfd348b8ab8db296a89e5,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a407328d8f3933f4da3a50a17fbe975a, type: 2}
     - target: {fileID: 919132149155446097, guid: 5e9581cfaafbfd348b8ab8db296a89e5,
         type: 3}
       propertyPath: m_Name
