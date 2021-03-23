@@ -168,7 +168,7 @@ public class GameController : MonoBehaviour
                     if (hit.collider.GetComponentInParent<BoatController>().IsDestroyed())
                     {
                         audioManager.Play("Destruction");
-                        Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject);
+                        Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject );
                     }
                 }
             }
