@@ -16,6 +16,11 @@ public class BoatController : MonoBehaviour, IHittable
     private List<ObstacleTrigger> _obstacles;
     [SerializeField] private int size = 1;
     [SerializeField] private bool hit = false;
+
+    [SerializeField] private TileTrigger occupiedTile;
+    
+    private GameObject boat, destroyedBoat;
+    
     
     private void OnTriggerEnter(Collider other)
     {
@@ -42,6 +47,9 @@ public class BoatController : MonoBehaviour, IHittable
 
     void Start()
     {
+        boat = transform.GetChild(transform.childCount - 2).gameObject;
+        destroyedBoat = transform.GetChild(transform.childCount - 1).gameObject;
+
         _obstacles = new List<ObstacleTrigger>();
         for (int i = 0; i < size - 1; i++)
         {
@@ -80,6 +88,7 @@ public class BoatController : MonoBehaviour, IHittable
                 }
             }
             
+            
             _movable = false;
         }
         transform.position = _gridPosition;
@@ -103,6 +112,8 @@ public class BoatController : MonoBehaviour, IHittable
                 }
             }
 
+            boat.SetActive(false);
+            destroyedBoat.SetActive(true);
             return true;
         }
 

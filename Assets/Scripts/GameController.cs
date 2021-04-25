@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.WSA;
 
 public enum GameState
 {
@@ -15,19 +16,45 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameState gameState;
     [SerializeField] private AudioManager audioManager;
     [SerializeField] private CameraController cameraController;
+    [SerializeField] private GameObject playerBoardOrigin;
+    [SerializeField] private GameObject enemyBoardOrigin;
+    [SerializeField] private GameObject tile;
+    
     private BoatController _selectedBoat;
     private int _selectableLayerMask;
+    private int _tileLayerMask;
     private List<BoatController> _placedBoats;
+    private List<BoatController> _enemyBoats;
+    private TileTrigger _selectedTile;
+
+    private GameObject smallBoat;
     
+    // Gameplay phase;
 
     
-    
+
     // Start is called before the first frame update
     void Start()
     {
         gameState = GameState.ShipPlacement;
         _selectableLayerMask = LayerMask.GetMask("PlayerBoat");
+        _tileLayerMask = LayerMask.GetMask("TileSelection");
         _placedBoats = new List<BoatController>();
+        print("Trying to make a boat");
+        // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
+        // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
+        // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
+        // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
+        // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
+        // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
+        // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
+        // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
+        // Asset loading doesn't work
+        // smallBoat = (GameObject) GameObject.Instantiate(Resources.Load("Prefabs/Position.prefab"));
+        print("Creating Tile");
+        print("Creating Board");
+        CreateBoardTiles();
+        CreateEnemyBoard();
 
     }
 
@@ -83,8 +110,14 @@ public class GameController : MonoBehaviour
 
     public void ShipPlacement()
     {
+        if (_placedBoats.Count == 10)
+        {
+            ChangeGameState(GameState.PlayerAttack);
+        }
+        
         if (Input.GetMouseButtonDown(0))
         {
+            // Ship selection on left mouse click
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, _selectableLayerMask))
@@ -104,6 +137,7 @@ public class GameController : MonoBehaviour
         
         if (Input.GetMouseButton(0) && _selectedBoat != null)
         {
+            // Ship movement
             _selectedBoat.transform.position = GetWorldPositionFromScreen(Input.mousePosition);
             if (Input.GetKeyDown(KeyCode.R))
             {
@@ -113,6 +147,7 @@ public class GameController : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0) && _selectedBoat != null)
         {
+            // Ship placement to position
             if (_selectedBoat.ChangedPosition())
             {
                 audioManager.Play("Success");
@@ -142,39 +177,87 @@ public class GameController : MonoBehaviour
                 }
             }
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+    public void CreateBoardTiles()
+    {
+        GameObject tiles = playerBoardOrigin.transform.GetChild(0).gameObject;
+        for (int i = 0; i < 100; i++)
         {
-            ChangeGameState(GameState.PlayerAttack);
+            GameObject newTile = GameObject.Instantiate(tile);
+            newTile.transform.parent = tiles.transform;
+            newTile.transform.position = playerBoardOrigin.transform.position + new Vector3((i / 10) + 0.5f, 0, (i % 10) + 0.5f);
         }
     }
 
+    public void CreateEnemyBoard()
+    {
+        GameObject tiles = enemyBoardOrigin.transform.GetChild(0).gameObject;
+        for (int i = 0; i < 100; i++)
+        {
+            GameObject newTile = GameObject.Instantiate(tile);
+            newTile.transform.parent = tiles.transform;
+            newTile.transform.position = enemyBoardOrigin.transform.position + new Vector3((i / 10) + 0.5f, 0, (i % 10) + 0.5f);
+        }
+
+        // FINISH FINISH FINISH FINISH FINISH
+        // FINISH FINISH FINISH FINISH FINISH
+        // FINISH FINISH FINISH FINISH FINISH
+        // FINISH FINISH FINISH FINISH FINISH
+        // FINISH FINISH FINISH FINISH FINISH
+        // FINISH FINISH FINISH FINISH FINISH
+        // FINISH FINISH FINISH FINISH FINISH
+        // FINISH FINISH FINISH FINISH FINISH
+        
+        // for (int i = 0; i < 4; i++)
+        // {
+        //     GameObject boat = enemyBoardOrigin.transform.GetChild(1).GetChild(0).gameObject;
+        // }
+        
+    }
+    
     public void PlayerAttack()
     {
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, _selectableLayerMask))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, _tileLayerMask))
             {
-                IHittable boat = hit.collider.GetComponentInChildren<IHittable>();
-                if (boat.IsHit())
+                TileTrigger tile = hit.collider.GetComponentInParent<TileTrigger>();
+                if (tile.IsMarked())
                 {
-                    print("Boat already hit");
+                    print("ADD ERROR SOUND");
+                    print("This tile is already clicked");
+                    // audioManager.Play("Error");
+                    return;
+                }
+
+                GameObject occupiedObject = tile.GetOccupiedObject();
+                if (occupiedObject != null)
+                {
+                    IHittable boatPiece = tile.GetOccupiedObject().GetComponentInChildren<IHittable>();
+                    boatPiece.Hit();
+                    BoatController boat = tile.GetOccupiedObject().GetComponentInParent<BoatController>();
+                    if (boat.IsDestroyed())
+                    {
+                        audioManager.Play("Destruction");
+                        _placedBoats.Remove(boat);
+                        // Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject );
+                    }
+                    tile.SetMarked();
                 }
                 else
                 {
-                    boat.Hit();
-                    if (hit.collider.GetComponentInParent<BoatController>().IsDestroyed())
-                    {
-                        audioManager.Play("Destruction");
-                        Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject );
-                    }
+                    tile.SetMarked();
+                    ChangeGameState(GameState.EnemyAttack);
                 }
             }
             else
             {
-                ChangeGameState(GameState.EnemyAttack);
+                print("ADD ERROR SOUND");
+                print("Player clicked somewhere else");
+                // audioManager.Play("Error");
             }
         }
     }

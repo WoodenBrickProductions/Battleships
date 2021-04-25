@@ -9,6 +9,7 @@ public class PositionTrigger : MonoBehaviour
 
     private GameObject _selectionCircle;
     [SerializeField] private GameObject _occupiedObject;
+    private TileTrigger _tileTrigger;
     
     private void OnTriggerEnter(Collider other)
     {
@@ -28,6 +29,7 @@ public class PositionTrigger : MonoBehaviour
     public void SetOccupied(GameObject gameObject)
     {
         _occupiedObject = gameObject;
+        _tileTrigger.SetOccupied(gameObject);
     }
     
     public bool IsOccupied()
@@ -39,5 +41,6 @@ public class PositionTrigger : MonoBehaviour
     void Start()
     {
         _selectionCircle = transform.GetChild(0).gameObject;
+        _tileTrigger = GetComponentInParent<TileTrigger>();
     }
 }
