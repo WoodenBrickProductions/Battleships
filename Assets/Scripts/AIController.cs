@@ -34,11 +34,15 @@ public class AIController : MonoBehaviour
                 {
                     int a = (int) Mathf.Clamp(Random.value * 10, 0f, 9f);
                     int b = (int) Mathf.Clamp(Random.value * 10, 0f, 9f);
-                    int r = (int) Random.value * 4;
+                    int r = (int) (Random.value * 4);
 
                     failed = false;
-                    int aCheck = a + (3 - i) * (int) Math.Sin(Mathf.Deg2Rad * 90 * r);
-                    int bCheck = b + (3 - i) * (int) Math.Cos(Mathf.Deg2Rad * 90 * r);
+                    print(Mathf.Sin(Mathf.Deg2Rad * 90 * r));
+                    int sinA = (int) Mathf.Sin(Mathf.Deg2Rad * 90 * r);
+                    print("SinA: " + sinA);
+                    int aCheck = a + (3 - i) * sinA;
+                    int bCheck = b + (3 - i) * (int) Mathf.Cos(Mathf.Deg2Rad * 90 * r);
+                    
                     if (aCheck < 0 || aCheck > 9 || bCheck < 0 || bCheck > 9)
                     {
                         failed = true;
@@ -47,7 +51,10 @@ public class AIController : MonoBehaviour
                     {
                         for (int k = 0; k < 4 - i; k++)
                         {
-                            if (matrix[a + k * (int)Math.Sin(Mathf.Deg2Rad*90*r), b + k * (int)Math.Cos(Mathf.Deg2Rad*90*r)] == 1)
+                            print("Sin of Angle: " + r + "   " + (int)Mathf.Sin(Mathf.Deg2Rad*90*r));
+                            int ax = a + k * (int) Mathf.Sin(Mathf.Deg2Rad * 90 * r);
+                            int bx = b + k * (int) Mathf.Cos(Mathf.Deg2Rad * 90 * r);
+                            if (matrix[ax, bx] >= 1)
                             {
                                 failed = true;
                                 break;
@@ -59,8 +66,8 @@ public class AIController : MonoBehaviour
                             positions[count++] = new Vector3(a + 0.5f, r, b + 0.5f);
                             for (int k = 0; k < 4 - i; k++)
                             {
-                                matrix[a + k * (int) Math.Sin(Mathf.Deg2Rad * 90 * r),
-                                    b + k * (int) Math.Cos(Mathf.Deg2Rad * 90 * r)] = 1;
+                                matrix[a + k * (int) Mathf.Sin(Mathf.Deg2Rad * 90 * r),
+                                    b + k * (int) Mathf.Cos(Mathf.Deg2Rad * 90 * r)] += 1;
                             }
                         }
                     }
@@ -68,6 +75,7 @@ public class AIController : MonoBehaviour
             }
         }
 
+        
         return positions;
     }
     

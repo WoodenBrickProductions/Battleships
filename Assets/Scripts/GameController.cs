@@ -29,6 +29,8 @@ public class GameController : MonoBehaviour
     private List<BoatController> _enemyBoats;
     private TileTrigger _selectedTile;
     private AIController _aiController;
+
+    private bool placingEnemyShips = false;
     
     [SerializeField] GameObject[] boatsGameObjects;
     
@@ -69,7 +71,11 @@ public class GameController : MonoBehaviour
         switch (gameState)
         {
             case GameState.EnemyBoardPlacement:
-                PlaceEnemyShips();
+                if (!placingEnemyShips)
+                {
+                    placingEnemyShips = true;
+                    StartCoroutine("PlaceEnemyShips");
+                }
                 break;
             case GameState.ShipPlacement:
                 ShipPlacement();
@@ -223,7 +229,7 @@ public class GameController : MonoBehaviour
         
         for (int i = 0; i < 4; i++)
         {
-            for (int j = 0; j < 4 - i; j++)
+            for (int j = 3 - i; j < 4; j++)
             {
                 GameObject boat = GameObject.Instantiate(enemyBoardOrigin.transform.GetChild(1).GetChild(i).gameObject, boats);
                 _enemyBoats.Add(boat.GetComponentInParent<BoatController>());
@@ -252,6 +258,7 @@ public class GameController : MonoBehaviour
         //     PlaceBoat(boat);
         // }
         
+        print("CHANGING TO PLAYER ATTACK");
         
         ChangeGameState(GameState.PlayerAttack);
     }
