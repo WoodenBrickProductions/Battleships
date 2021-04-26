@@ -1,13 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.WSA;
+using Random = UnityEngine.Random;
 
 public enum GameState
 {
-    ShipPlacement, PlayerAttack, EnemyAttack, PlayerWin, PlayerDefeat
+    ShipPlacement, PlayerAttack, EnemyAttack, PlayerWin, PlayerDefeat, EnemyBoardPlacement
 }
 
 public class GameController : MonoBehaviour
@@ -26,8 +28,10 @@ public class GameController : MonoBehaviour
     private List<BoatController> _placedBoats;
     private List<BoatController> _enemyBoats;
     private TileTrigger _selectedTile;
-
-    private GameObject smallBoat;
+    private AIController _aiController;
+    
+    [SerializeField] GameObject[] boatsGameObjects;
+    
     
     // Gameplay phase;
 
@@ -40,6 +44,8 @@ public class GameController : MonoBehaviour
         _selectableLayerMask = LayerMask.GetMask("PlayerBoat");
         _tileLayerMask = LayerMask.GetMask("TileSelection");
         _placedBoats = new List<BoatController>();
+        _enemyBoats = new List<BoatController>();
+        _aiController = GetComponent<AIController>();
         print("Trying to make a boat");
         // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
         // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
@@ -55,7 +61,6 @@ public class GameController : MonoBehaviour
         print("Creating Board");
         CreateBoardTiles();
         CreateEnemyBoard();
-
     }
 
     // Update is called once per frame
@@ -63,6 +68,9 @@ public class GameController : MonoBehaviour
     {
         switch (gameState)
         {
+            case GameState.EnemyBoardPlacement:
+                PlaceEnemyShips();
+                break;
             case GameState.ShipPlacement:
                 ShipPlacement();
                 break;
@@ -110,9 +118,9 @@ public class GameController : MonoBehaviour
 
     public void ShipPlacement()
     {
-        if (_placedBoats.Count == 10)
+        if (_placedBoats.Count == 10 || Input.GetKeyDown(KeyCode.Space))
         {
-            ChangeGameState(GameState.PlayerAttack);
+            ChangeGameState(GameState.EnemyBoardPlacement);
         }
         
         if (Input.GetMouseButtonDown(0))
@@ -208,12 +216,65 @@ public class GameController : MonoBehaviour
         // FINISH FINISH FINISH FINISH FINISH
         // FINISH FINISH FINISH FINISH FINISH
         // FINISH FINISH FINISH FINISH FINISH
+
+        Transform boats = enemyBoardOrigin.transform.GetChild(2);
+
         
-        // for (int i = 0; i < 4; i++)
+        
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4 - i; j++)
+            {
+                GameObject boat = GameObject.Instantiate(enemyBoardOrigin.transform.GetChild(1).GetChild(i).gameObject, boats);
+                _enemyBoats.Add(boat.GetComponentInParent<BoatController>());
+            }
+        }
+        
+        
+    }
+
+    public void PlaceEnemyShips()
+    {
+        Vector3[] positions = _aiController.CreateBoatPositions();
+
+        for (int i = 0; i < 10; i++)
+        {
+            Vector3 origin = enemyBoardOrigin.transform.position;
+            Vector3 boatLocation = origin +  new Vector3(positions[i].x, 0, positions[i].z);
+            int rotation = (int) positions[i].y;
+            Transform boat = _enemyBoats[i].transform;
+            boat.position = boatLocation;
+            boat.Rotate(0, 90*rotation, 0 );
+        }
+        
+        // foreach (BoatController boat in _enemyBoats)
         // {
-        //     GameObject boat = enemyBoardOrigin.transform.GetChild(1).GetChild(0).gameObject;
+        //     PlaceBoat(boat);
         // }
         
+        
+        ChangeGameState(GameState.PlayerAttack);
+    }
+
+    private bool PlaceBoat(BoatController boat)
+    {
+        GameObject tiles = enemyBoardOrigin.transform.GetChild(0).gameObject;
+        Vector3 origin = enemyBoardOrigin.transform.position;
+        int k = 0;
+        // do
+        // {
+            k++;
+            int pos = (int) ((Random.value * 100 + 1) % 100);
+            int rot = (int) (Random.value * 4);
+            boat.transform.Rotate(0, 90*rot, 0 );
+            boat.transform.position = origin + new Vector3((pos / 10) + 0.5f, 0, (pos % 10) + 0.5f);
+            boat.SnapToGridPosition();
+            print("I TRIED");
+        // } while (!boatController.ChangedPosition() || k > 10);
+        
+        if (k > 99) return false;
+        
+        return true;
     }
     
     public void PlayerAttack()
