@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DefaultNamespace;
 using UnityEngine;
 using Object = System.Object;
+using Random = UnityEngine.Random;
 
 public class BoatController : MonoBehaviour, IHittable
 {
@@ -18,10 +19,20 @@ public class BoatController : MonoBehaviour, IHittable
     [SerializeField] private bool hit = false;
 
     [SerializeField] private TileTrigger occupiedTile;
-    
+
+    [SerializeField] private float amplitude;
+    [SerializeField] private float frequency;
+
     private GameObject boat, destroyedBoat;
+    private float randomOffset;
     
-    
+    public void Update()
+    {
+        Vector3 currentPosition = boat.transform.position;
+        currentPosition.y += Mathf.Sin ((Time.fixedTime + randomOffset) * Mathf.PI * frequency) * amplitude;
+        boat.transform.position = currentPosition;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         //TODO Set state in Boat Controller for PositionTrigger
@@ -47,6 +58,7 @@ public class BoatController : MonoBehaviour, IHittable
 
     void Start()
     {
+        randomOffset = Random.value;
         boat = transform.GetChild(transform.childCount - 2).gameObject;
         destroyedBoat = transform.GetChild(transform.childCount - 1).gameObject;
 

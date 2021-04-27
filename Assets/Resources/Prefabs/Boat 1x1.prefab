@@ -80,6 +80,8 @@ MonoBehaviour:
   size: 1
   hit: 0
   occupiedTile: {fileID: 0}
+  amplitude: 0.0001
+  frequency: 1
 --- !u!1001 &2268269586419118095
 PrefabInstance:
   m_ObjectHideFlags: 0

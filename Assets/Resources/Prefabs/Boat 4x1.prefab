@@ -235,6 +235,8 @@ MonoBehaviour:
   size: 4
   hit: 0
   occupiedTile: {fileID: 0}
+  amplitude: 0.0001
+  frequency: 1
 --- !u!1 &9158656703946172053
 GameObject:
   m_ObjectHideFlags: 0

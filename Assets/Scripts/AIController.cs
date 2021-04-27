@@ -9,7 +9,7 @@ public class AIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     public Vector3[] CreateBoatPositions()
@@ -78,7 +78,7 @@ public class AIController : MonoBehaviour
         
         return positions;
     }
-    
+
     // Update is called once per frame
     void Update()
     {

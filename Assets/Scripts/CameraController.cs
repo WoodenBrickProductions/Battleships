@@ -9,6 +9,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Vector3 enemyBoardPosition;
     [SerializeField] private float cameraSpeed = 3f;
     [SerializeField] private float smoothing = 0.2f;
+    [SerializeField] private float maxSpeed = 6f;
     
     private float _distanceToLocation;
     private Vector3 _targetLocation;
@@ -44,7 +45,8 @@ public class CameraController : MonoBehaviour
         {
              _factor = (_distanceToLocation + _distanceToLocation * smoothing) / // Travel speed goes from 1 to 2 to 1
                            Math.Abs(_distanceToLocation/2 - (_targetLocation - transform.position).magnitude + _distanceToLocation * smoothing);
-             _factor = (float) Math.Sqrt(_factor);
+             _factor = Mathf.Clamp((float)Math.Sqrt(_factor), 0, maxSpeed);
+             
             transform.position = Vector3.MoveTowards(transform.position, _targetLocation, cameraSpeed * _factor * Time.deltaTime);
         }
         else

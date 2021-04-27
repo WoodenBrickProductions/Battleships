@@ -12,7 +12,6 @@ public class TileTrigger : MonoBehaviour
     void Start()
     {
         marker = transform.GetChild(2).gameObject;
-        marker.SetActive(false);
         occupiedObject = null;
     }
 
@@ -32,9 +31,16 @@ public class TileTrigger : MonoBehaviour
         occupiedObject = gameObject;
     }
 
-    public void SetMarked()
+    public void SetMarked(bool hit)
     {
-        marker.SetActive(true);
+        if (hit)
+        {
+            marker.transform.GetChild(1).gameObject.SetActive(true);
+        }
+        else
+        {
+            marker.transform.GetChild(0).gameObject.SetActive(true);
+        }
         marked = true;
     }
 

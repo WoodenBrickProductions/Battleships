@@ -14,7 +14,10 @@ public class PositionTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         print(gameObject + " PositionTrigger is called, entered: " + other.gameObject + " " + IsOccupied());
-        _selectionCircle.SetActive(true);
+        if (!other.gameObject.CompareTag("EnemyBoat"))
+        {
+            _selectionCircle.SetActive(true);
+        }
     }
 
     private void OnTriggerExit(Collider other)

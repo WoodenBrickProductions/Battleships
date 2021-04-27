@@ -13,9 +13,9 @@ public class MenuController : MonoBehaviour
 
     }
 
-    public void ChangeScene()
+    public void ChangeScene(int i)
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(i);
     }
     
     // Update is called once per frame

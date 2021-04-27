@@ -2028,6 +2028,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1279717371}
     m_Modifications:
+    - target: {fileID: 629121355378846859, guid: 4b3368c9d355c2043aa8f64fdfb6256c,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6186410586108817811, guid: 4b3368c9d355c2043aa8f64fdfb6256c,
         type: 3}
       propertyPath: m_RootOrder
@@ -2087,6 +2092,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Boat 1x1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7100018124927992685, guid: 4b3368c9d355c2043aa8f64fdfb6256c,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyBoat
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b3368c9d355c2043aa8f64fdfb6256c, type: 3}
@@ -3748,6 +3758,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1279717371}
     m_Modifications:
+    - target: {fileID: 3824212922515933893, guid: 09791b148e3c60f4197a3127316c15f3,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyBoat
+      objectReference: {fileID: 0}
     - target: {fileID: 4704988287456255698, guid: 09791b148e3c60f4197a3127316c15f3,
         type: 3}
       propertyPath: m_RootOrder
@@ -3803,10 +3818,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5167085583664501773, guid: 09791b148e3c60f4197a3127316c15f3,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyBoat
+      objectReference: {fileID: 0}
+    - target: {fileID: 5488549730836326087, guid: 09791b148e3c60f4197a3127316c15f3,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8510016108477312044, guid: 09791b148e3c60f4197a3127316c15f3,
         type: 3}
       propertyPath: m_Name
       value: Boat 4x1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8510016108477312044, guid: 09791b148e3c60f4197a3127316c15f3,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyBoat
+      objectReference: {fileID: 0}
+    - target: {fileID: 9158656703946172053, guid: 09791b148e3c60f4197a3127316c15f3,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyBoat
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09791b148e3c60f4197a3127316c15f3, type: 3}
@@ -4009,7 +4044,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &733476459
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5526,6 +5561,7 @@ GameObject:
   - component: {fileID: 956971299}
   - component: {fileID: 956971301}
   - component: {fileID: 956971302}
+  - component: {fileID: 956971303}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -5551,6 +5587,9 @@ MonoBehaviour:
   playerBoardOrigin: {fileID: 1833013131}
   enemyBoardOrigin: {fileID: 1384736801}
   tile: {fileID: 6243779473385542296, guid: 9c16e5883d8d3374ea07df582607938d, type: 3}
+  menuController: {fileID: 956971303}
+  win: {fileID: 733476458}
+  lose: {fileID: 1995483964}
   boatsGameObjects:
   - {fileID: 338944711}
   - {fileID: 983627718}
@@ -5584,7 +5623,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sounds:
   - name: Attack
-    clip: {fileID: 8300000, guid: e8af168eb1f41724082a86e732304eac, type: 3}
+    clip: {fileID: 8300000, guid: 02aa418d08095f84ba5c2f4571a6ca8c, type: 3}
     volume: 0.2
     pitch: 3
     source: {fileID: 0}
@@ -5594,9 +5633,9 @@ MonoBehaviour:
     pitch: 2
     source: {fileID: 0}
   - name: Gameover
-    clip: {fileID: 8300000, guid: c506f8ac99a2fa443851cf3c0fc16b2a, type: 3}
+    clip: {fileID: 8300000, guid: 40d6d1a9928ff8646808374c7dd1d460, type: 3}
     volume: 0.2
-    pitch: 2.51
+    pitch: 1.07
     source: {fileID: 0}
   - name: Success
     clip: {fileID: 8300000, guid: b66b6afec27534b4eaffa57886336080, type: 3}
@@ -5608,6 +5647,16 @@ MonoBehaviour:
     volume: 0.2
     pitch: 3
     source: {fileID: 0}
+  - name: Error
+    clip: {fileID: 8300000, guid: bd0911917e95f2841a6f62fab5f7e22b, type: 3}
+    volume: 0.2
+    pitch: 3
+    source: {fileID: 0}
+  - name: Miss
+    clip: {fileID: 8300000, guid: c506f8ac99a2fa443851cf3c0fc16b2a, type: 3}
+    volume: 0.2
+    pitch: 2.5
+    source: {fileID: 0}
 --- !u!114 &956971302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5618,6 +5667,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67d04c84cf62952488dcec2e7264fc41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &956971303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956971298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d049efa0d49e3ac4a89aeaa3d9a93c0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &973164085
@@ -5706,6 +5767,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1279717371}
     m_Modifications:
+    - target: {fileID: 2062471032069225028, guid: 1532e84ad15dd46448c850fe189b5f25,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5500220136669431675, guid: 1532e84ad15dd46448c850fe189b5f25,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyBoat
+      objectReference: {fileID: 0}
     - target: {fileID: 6404819535291817032, guid: 1532e84ad15dd46448c850fe189b5f25,
         type: 3}
       propertyPath: m_RootOrder
@@ -5765,6 +5836,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Boat 2x1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8048110748194139830, guid: 1532e84ad15dd46448c850fe189b5f25,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyBoat
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1532e84ad15dd46448c850fe189b5f25, type: 3}
@@ -7905,8 +7981,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerBoardPosition: {x: 0, y: 8, z: -6}
   enemyBoardPosition: {x: 0, y: 8, z: 12}
-  cameraSpeed: 5
-  smoothing: 0.05
+  cameraSpeed: 10
+  smoothing: 0.1
+  maxSpeed: 6
 --- !u!1001 &1457689661
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10045,10 +10122,25 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1279717371}
     m_Modifications:
+    - target: {fileID: 4350607936767257331, guid: 96a845b4d6c88884ab2929482e698e30,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyBoat
+      objectReference: {fileID: 0}
+    - target: {fileID: 6167277016581200245, guid: 96a845b4d6c88884ab2929482e698e30,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6751833980894547817, guid: 96a845b4d6c88884ab2929482e698e30,
         type: 3}
       propertyPath: m_Name
       value: Boat 3x1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6751833980894547817, guid: 96a845b4d6c88884ab2929482e698e30,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyBoat
       objectReference: {fileID: 0}
     - target: {fileID: 7701588848705404311, guid: 96a845b4d6c88884ab2929482e698e30,
         type: 3}
@@ -10104,6 +10196,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8432193392367233316, guid: 96a845b4d6c88884ab2929482e698e30,
+        type: 3}
+      propertyPath: m_TagString
+      value: EnemyBoat
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 96a845b4d6c88884ab2929482e698e30, type: 3}
@@ -11063,7 +11160,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1995483965
 RectTransform:
   m_ObjectHideFlags: 0
