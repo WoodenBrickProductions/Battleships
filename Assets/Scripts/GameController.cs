@@ -28,7 +28,7 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject win;
     [SerializeField] private GameObject lose;
 
-    private float attackTimer = 1.5f;
+    private float attackTimer = 1.25f;
 
     private bool _gameOver = false;
     private BoatController _selectedBoat;
@@ -99,7 +99,7 @@ public class GameController : MonoBehaviour
                 if (attackTimer <= 0)
                 {
                     EnemyAttack();
-                    attackTimer = 2;
+                    attackTimer = 1.25f;
                 }
                 else
                 {
@@ -442,8 +442,8 @@ public class GameController : MonoBehaviour
                         {
                             audioManager.Play("Miss");
                             tile.SetMarked(false);
-                            ChangeGameState(GameState.PlayerAttack);
                             playerBoardMatrix[a, b] = 1;
+                            ChangeGameState(GameState.PlayerAttack);
                         }
                     }
                 }
