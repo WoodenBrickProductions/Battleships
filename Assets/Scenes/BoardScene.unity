@@ -515,7 +515,7 @@ MeshRenderer:
   m_GameObject: {fileID: 124188751}
   m_Enabled: 1
   m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -738,11 +738,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 396204473}
     m_Modifications:
-    - target: {fileID: 932270574328307383, guid: 1532e84ad15dd46448c850fe189b5f25,
-        type: 3}
-      propertyPath: size
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 6404819535291817032, guid: 1532e84ad15dd46448c850fe189b5f25,
         type: 3}
       propertyPath: m_RootOrder
@@ -2198,11 +2193,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 396204473}
     m_Modifications:
-    - target: {fileID: 932270574328307383, guid: 1532e84ad15dd46448c850fe189b5f25,
-        type: 3}
-      propertyPath: size
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 6404819535291817032, guid: 1532e84ad15dd46448c850fe189b5f25,
         type: 3}
       propertyPath: m_RootOrder
@@ -11036,6 +11026,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: c2e948b13099212449caeab87d2dcc73,
         type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c2e948b13099212449caeab87d2dcc73,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 83c79d896b96558499ffcd9d34d48120, type: 2}
@@ -11860,11 +11855,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 396204473}
     m_Modifications:
-    - target: {fileID: 932270574328307383, guid: 1532e84ad15dd46448c850fe189b5f25,
-        type: 3}
-      propertyPath: size
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 6404819535291817032, guid: 1532e84ad15dd46448c850fe189b5f25,
         type: 3}
       propertyPath: m_RootOrder
