@@ -19,13 +19,36 @@ public class BoatController : MonoBehaviour, IHittable
     [SerializeField] private int size = 1;
     [SerializeField] private bool hit = false;
 
+    private GameObject _particles;
     [SerializeField] private TileTrigger occupiedTile;
 
     [SerializeField] private float amplitude;
     [SerializeField] private float frequency;
 
+    //Explosion particle
+    [SerializeField] private GameObject explosionParticle;
+    
     private GameObject boat, destroyedBoat;
     private float randomOffset;
+    
+    void Start()
+    {
+        _particles = gameObject.transform.GetChild(transform.childCount - 3).gameObject;
+        //_particles = Resources.Load("/Prefabs/Particles/ExplosionParticle.prefab") as GameObject;
+        randomOffset = Random.value;
+        boat = transform.GetChild(transform.childCount - 2).gameObject;
+        destroyedBoat = transform.GetChild(transform.childCount - 1).gameObject;
+
+        _obstacles = new List<ObstacleTrigger>();
+        for (int i = 0; i < size - 1; i++)
+        {
+            _obstacles.Add(transform.GetChild(i).GetComponentInChildren<ObstacleTrigger>());
+        }
+        _startingPosition = transform.position;
+        _startingRotation = transform.rotation;
+        _gridPosition = _startingPosition;
+        SetMovable(true);
+    }
     
     public void Update()
     {
@@ -57,22 +80,6 @@ public class BoatController : MonoBehaviour, IHittable
         }
     }
 
-    void Start()
-    {
-        randomOffset = Random.value;
-        boat = transform.GetChild(transform.childCount - 2).gameObject;
-        destroyedBoat = transform.GetChild(transform.childCount - 1).gameObject;
-
-        _obstacles = new List<ObstacleTrigger>();
-        for (int i = 0; i < size - 1; i++)
-        {
-            _obstacles.Add(transform.GetChild(i).GetComponentInChildren<ObstacleTrigger>());
-        }
-        _startingPosition = transform.position;
-        _startingRotation = transform.rotation;
-        _gridPosition = _startingPosition;
-        _movable = true;
-    }
 
     public bool IsMovable()
     {
@@ -96,14 +103,14 @@ public class BoatController : MonoBehaviour, IHittable
                 {
                     _gridPosition = _startingPosition;
                     print("Exiting");
-                    _movable = true;
+                    SetMovable(true);
                     transform.position = _gridPosition;
                     return;
                 }
             }
             
             
-            _movable = false;
+            SetMovable(false);
         }
         transform.position = _gridPosition;
     }
@@ -112,7 +119,7 @@ public class BoatController : MonoBehaviour, IHittable
     {
         transform.position = _startingPosition;
         transform.rotation = _startingRotation;
-        _movable = true;
+        SetMovable(true);
     }
 
     public bool IsDestroyed()
@@ -129,10 +136,19 @@ public class BoatController : MonoBehaviour, IHittable
 
             boat.SetActive(false);
             destroyedBoat.SetActive(true);
+            // GameObject explosion = GameObject.Instantiate(_particles);
+            // explosion.transform.position = transform.position;
+            // Destroy(explosion, 3f);
             return true;
         }
 
         return false;
+    }
+
+    public void SetMovable(bool movable)
+    {
+        _movable = movable;
+        _particles.SetActive(!_movable);
     }
     
     public bool IsHit()
