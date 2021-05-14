@@ -19,7 +19,7 @@ Assets/Plugins/Editor/JetBrains*
 /[Bb]uilds/
 /[Ll]ogs/
 /[Mm]emoryCaptures/
-/Assets/Changelog/
+/Change[Ll]og/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta
