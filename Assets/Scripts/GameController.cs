@@ -161,10 +161,10 @@ public class GameController : MonoBehaviour
             case GameState.ShipPlacement:
                 break;
             case GameState.PlayerAttack:
-                cameraController.ChangeCameraPosition();
+                cameraController.ChangeCameraPosition(CameraPosition.Player);
                 break;
             case GameState.EnemyAttack:
-                cameraController.ChangeCameraPosition();
+                cameraController.ChangeCameraPosition(CameraPosition.Enemy);
                 break;
             case GameState.PlayerWin:
                 break;

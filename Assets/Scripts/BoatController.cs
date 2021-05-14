@@ -13,6 +13,7 @@ public class BoatController : MonoBehaviour, IHittable
 
     [SerializeField] private Vector3 _gridPosition;
     private Vector3 _startingPosition;
+    private Quaternion _startingRotation;
     private bool _movable;
     private List<ObstacleTrigger> _obstacles;
     [SerializeField] private int size = 1;
@@ -68,6 +69,7 @@ public class BoatController : MonoBehaviour, IHittable
             _obstacles.Add(transform.GetChild(i).GetComponentInChildren<ObstacleTrigger>());
         }
         _startingPosition = transform.position;
+        _startingRotation = transform.rotation;
         _gridPosition = _startingPosition;
         _movable = true;
     }
@@ -109,6 +111,7 @@ public class BoatController : MonoBehaviour, IHittable
     public void ResetPosition()
     {
         transform.position = _startingPosition;
+        transform.rotation = _startingRotation;
         _movable = true;
     }
 
