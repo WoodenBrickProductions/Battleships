@@ -213,6 +213,9 @@ public class GameController : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0) && _selectedBoat != null)
         {
+            // Internal placement logic check
+            _selectedBoat.SnapToGridPosition();
+
             // Ship placement to position
             if (_selectedBoat.ChangedPosition())
             {
@@ -223,7 +226,6 @@ public class GameController : MonoBehaviour
             {
                 audioManager.Play("Error");
             }
-            _selectedBoat.SnapToGridPosition();
             _selectedBoat = null;
         }
 
