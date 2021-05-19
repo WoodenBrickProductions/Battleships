@@ -6,7 +6,7 @@ using UnityEngine;
 public class ObstacleTrigger : MonoBehaviour, IHittable
 {
     private Dictionary<Collider, PositionTrigger> obstructions;
-    private PositionTrigger _currentPosition;
+    [SerializeField] private PositionTrigger _currentPosition;
     [SerializeField] private int count;
     [SerializeField] private bool hit = false;
     
@@ -45,6 +45,10 @@ public class ObstacleTrigger : MonoBehaviour, IHittable
     {
         if (other.gameObject.tag == "Position")
         {
+            if (other.GetComponentInChildren<PositionTrigger>().Equals(_currentPosition))
+            {
+                _currentPosition = null;
+            }
             if(obstructions.ContainsKey(other))
             {
                 obstructions.Remove(other);
@@ -66,5 +70,10 @@ public class ObstacleTrigger : MonoBehaviour, IHittable
     public bool IsObstructed()
     {
         return obstructions.Count != 0;
+    }
+
+    public bool InPosition()
+    {
+        return _currentPosition != null;
     }
 }

@@ -20,7 +20,7 @@ public class BoatController : MonoBehaviour, IHittable
     [SerializeField] private bool hit = false;
 
     private GameObject _particles;
-    [SerializeField] private TileTrigger occupiedTile;
+    [SerializeField] private PositionTrigger occupiedPosition;
 
     [SerializeField] private float amplitude;
     [SerializeField] private float frequency;
@@ -68,6 +68,7 @@ public class BoatController : MonoBehaviour, IHittable
             {
                 position.SetOccupied(this.gameObject);
                 _gridPosition = position.gameObject.transform.position;
+                occupiedPosition = position;
             }
         }
     }
@@ -77,6 +78,7 @@ public class BoatController : MonoBehaviour, IHittable
         if (other.gameObject.transform.position == _gridPosition)
         {
             _gridPosition = _startingPosition;
+            occupiedPosition = null;
         }
     }
 
@@ -99,12 +101,11 @@ public class BoatController : MonoBehaviour, IHittable
             foreach (var obstacle in _obstacles)
             {
                 print(obstacle.GetObstructionCount());
-                if (obstacle.IsObstructed())
+                if (obstacle.IsObstructed() || !obstacle.InPosition())
                 {
                     _gridPosition = _startingPosition;
                     print("Exiting");
-                    SetMovable(true);
-                    transform.position = _gridPosition;
+                    ResetPosition();
                     return;
                 }
             }
@@ -119,6 +120,7 @@ public class BoatController : MonoBehaviour, IHittable
     {
         transform.position = _startingPosition;
         transform.rotation = _startingRotation;
+        occupiedPosition = null;
         SetMovable(true);
     }
 
