@@ -147,6 +147,11 @@ public class BoatController : MonoBehaviour, IHittable
         return false;
     }
 
+    public int GetSize()
+    {
+        return size;
+    }
+    
     public void SetMovable(bool movable)
     {
         _movable = movable;

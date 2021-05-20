@@ -30,6 +30,7 @@ public class GameController : MonoBehaviour
 
     private float attackTimer = 1.25f;
 
+    private int _hitCount = 0;
     private bool _gameOver = false;
     private BoatController _selectedBoat;
     private int _selectableLayerMask;
@@ -178,6 +179,7 @@ public class GameController : MonoBehaviour
     {
         if (_placedBoats.Count == 10 || Input.GetKeyDown(KeyCode.Space))
         {
+            CalculatePlayerBoardMatrix();
             ChangeGameState(GameState.EnemyBoardPlacement);
         }
         
@@ -397,15 +399,55 @@ public class GameController : MonoBehaviour
 
     private void EnemyAttack()
     {
+        
+        // 0 empty, 1 hit, 2 boat
         bool failed = true;
+
+        if (_hitCount > 50)
+        {
+            for (int i = 0; i < 100; i++)
+            {
+                if (!failed)
+                {
+                    break;
+                }
+                int x = i / 10;
+                int y = i % 10;
+                if (playerBoardMatrix[x, y] != 1)
+                {
+                    if (EnemyAttackTile(x, y))
+                    {
+                        
+                        for (int j = 0; j < 4; j++)
+                        {
+                            int xx = x + (int) Mathf.Sin(Mathf.Deg2Rad * i * 90);
+                            int yy = y + (int) Mathf.Cos(Mathf.Deg2Rad * i * 90);
+                            if (playerBoardMatrix[xx, yy] != 1)
+                            {
+                                EnemyAttackTile(xx, yy);
+                                // This is getting weird
+                            }
+                        }
+                }
+                    else
+                    {
+                        failed = false;
+                    }
+                }
+            }
+            
+            
+        }
+        
         while (failed)
         {
             int a = (int) Mathf.Clamp(Random.value * 10, 0f, 9f);
             int b = (int) Mathf.Clamp(Random.value * 10, 0f, 9f);
 
             failed = false;
-            if (playerBoardMatrix[a, b] >= 1)
+            if (playerBoardMatrix[a, b] == 1)
             {
+                
             }
             else
             {
@@ -458,6 +500,68 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public bool EnemyAttackTile(int a, int b)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(playerBoardOrigin.transform.position + new Vector3(a + 0.5f, 5, b + 0.5f), 
+                -Vector3.up, out hit, Mathf.Infinity, _tileLayerMask))
+        {
+            TileTrigger tile = hit.collider.GetComponentInParent<TileTrigger>();
+
+            GameObject occupiedObject = tile.GetOccupiedObject();
+            if (occupiedObject != null)
+            {
+                IHittable boatPiece = tile.GetOccupiedObject().GetComponentInChildren<IHittable>();
+                boatPiece.Hit();
+                BoatController boat = tile.GetOccupiedObject().GetComponentInParent<BoatController>();
+                audioManager.Play("Attack");
+                if (boat.IsDestroyed())
+                {
+                    audioManager.Play("Destruction");
+                    _placedBoats.Remove(boat);
+                    // Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject );
+                }
+                tile.SetMarked(true);
+                playerBoardMatrix[a, b] = 2;
+                return true;
+            }
+            else
+            {
+                audioManager.Play("Miss");
+                tile.SetMarked(false);
+                playerBoardMatrix[a, b] = 1;
+                return false;
+                
+            }
+        }
+
+        return false;
+    }
+    
+
+    public void CalculatePlayerBoardMatrix()
+    {
+        Vector3 origin = playerBoardOrigin.transform.position;
+        foreach (var boat in _placedBoats)
+        {
+            Vector3 pos = boat.transform.position - origin;
+            int x = (int) (pos.x - 0.5);
+            int y = (int) (pos.z - 0.5);
+
+            int r = (int) Math.Round(boat.transform.rotation.eulerAngles.y);
+            playerBoardMatrix[x, y] = 2;
+
+            print("Boat at x=" + x + "  y=" + y);
+            for (int i = 1; i < boat.GetSize(); i++)
+            {
+                int xx = x + i * (int) Mathf.Sin(Mathf.Deg2Rad * r);
+                int yy = y + i * (int) Mathf.Cos(Mathf.Deg2Rad * r);
+                playerBoardMatrix[xx,yy] = 2;
+                print("Part at x=" + xx + "  y=" + yy);
+            }
+        }
+    }
+    
     public void GoToMenu()
     {
         menuController.ChangeScene(0);
