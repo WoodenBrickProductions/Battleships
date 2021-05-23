@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectBobbingScript : MonoBehaviour
+public class ObjectMovementScript : MonoBehaviour
 {
     
     [SerializeField] private float amplitude = 0.0001f;
