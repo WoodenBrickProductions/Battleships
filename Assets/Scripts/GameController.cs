@@ -23,13 +23,22 @@ public class GameController : MonoBehaviour
     [SerializeField] private GameObject enemyBoardOrigin;
     [SerializeField] private GameObject tile;
     [SerializeField] private MenuController menuController;
+
+    [SerializeField] private GameObject WaterSplashInstance;
+    [SerializeField] private GameObject ExplosionInstance;
+    [SerializeField] private GameObject CannonFireTarget;
     
     //UI
     [SerializeField] private GameObject win;
     [SerializeField] private GameObject lose;
 
-    private float attackTimer = 1.25f;
 
+    private float missTimerDefault = 1.5f;
+    private float attackTimerDefault = 1.5f;
+
+    private float attackTimer = 1.5f;
+    private float missTimer = 1.5f;
+    
     private int _hitCount = 0;
     private bool _gameOver = false;
     private BoatController _selectedBoat;
@@ -39,7 +48,9 @@ public class GameController : MonoBehaviour
     private List<BoatController> _enemyBoats;
     private TileTrigger _selectedTile;
     private AIController _aiController;
-
+    private bool _enemyCanAttack = true;
+    private bool _playerCanAttack = true;
+    
     private bool placingEnemyShips = false;
 
     private int[,] playerBoardMatrix;
@@ -94,18 +105,52 @@ public class GameController : MonoBehaviour
                 ShipPlacement();
                 break;
             case GameState.PlayerAttack:
-                PlayerAttack();
-                break;
-            case GameState.EnemyAttack:
-                if (attackTimer <= 0)
+                if (_playerCanAttack)
                 {
-                    EnemyAttack();
-                    attackTimer = 1.25f;
+                    PlayerAttack();
                 }
                 else
                 {
-                    attackTimer -= 1 * Time.deltaTime;
+                    if (missTimer <= 0)
+                    {
+                        missTimer = missTimerDefault;
+                        _playerCanAttack = true;
+                        ChangeGameState(GameState.EnemyAttack);
+                    }
+                    else
+                    {
+                        missTimer -= Time.deltaTime;
+                    }
                 }
+                break;
+            case GameState.EnemyAttack:
+                if (_enemyCanAttack)
+                {
+                    if (attackTimer <= 0)
+                    {
+                        EnemyAttack();
+                        attackTimer = 1.25f;
+                    }
+                    else
+                    {
+                        attackTimer -= Time.deltaTime;
+                    }
+                }
+                else
+                {
+                    if (missTimer <= 0)
+                    {
+                        missTimer = missTimerDefault;
+                        attackTimer = attackTimerDefault;
+                        _enemyCanAttack = true;
+                        ChangeGameState(GameState.PlayerAttack);
+                    }
+                    else
+                    {
+                        missTimer -= Time.deltaTime;
+                    }
+                }
+
                 break;
             case GameState.PlayerWin:
                 PlayerWin();
@@ -115,19 +160,19 @@ public class GameController : MonoBehaviour
                 break;
         }
 
-        
-        // Temporary
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, Mathf.Infinity, _selectableLayerMask))
-            {
-                audioManager.Play("Destruction");
-                Destroy(hit.collider.gameObject);
-            }
-
-        }
+        //
+        // // Temporary
+        // if (Input.GetKeyDown(KeyCode.D))
+        // {
+        //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //     RaycastHit hit;
+        //     if (Physics.Raycast(ray, out hit, Mathf.Infinity, _selectableLayerMask))
+        //     {
+        //         audioManager.Play("Destruction");
+        //         Destroy(hit.collider.gameObject);
+        //     }
+        //
+        // }
     }
 
     
@@ -136,7 +181,7 @@ public class GameController : MonoBehaviour
         if (!_gameOver)
         {
             print("VICTORY");
-            audioManager.Play("Victory");
+            audioManager.Play("Victory", 0);
             win.SetActive(true);
             Invoke(nameof(GoToMenu), 3f);
             _gameOver = true;
@@ -148,7 +193,7 @@ public class GameController : MonoBehaviour
         if (!_gameOver)
         {
             print("DEFEAT");
-            audioManager.Play("Gameover");
+            audioManager.Play("Gameover", 0);
             lose.SetActive(true);
             Invoke(nameof(GoToMenu), 3f);
             _gameOver = false;
@@ -221,12 +266,13 @@ public class GameController : MonoBehaviour
             // Ship placement to position
             if (_selectedBoat.ChangedPosition())
             {
-                audioManager.Play("Success");
+                audioManager.Play("Success", 0);
                 _placedBoats.Add(_selectedBoat);
+                _selectedBoat.RotateCannonToTarget(CannonFireTarget.transform.position - _selectedBoat.transform.position);
             }
             else
             {
-                audioManager.Play("Error");
+                audioManager.Play("Error", 0);
             }
             _selectedBoat = null;
         }
@@ -342,14 +388,17 @@ public class GameController : MonoBehaviour
     
     public void PlayerAttack()
     {
-
-
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, Mathf.Infinity, _tileLayerMask))
             {
+                foreach (BoatController boat in _placedBoats)
+                {
+                    boat.FireCannons();
+                }
+                
                 TileTrigger tile = hit.collider.GetComponentInParent<TileTrigger>();
                 if (tile.IsMarked())
                 {
@@ -360,15 +409,19 @@ public class GameController : MonoBehaviour
                 }
 
                 GameObject occupiedObject = tile.GetOccupiedObject();
+                audioManager.Play("Attack", 0);
                 if (occupiedObject != null)
                 {
                     IHittable boatPiece = tile.GetOccupiedObject().GetComponentInChildren<IHittable>();
                     boatPiece.Hit();
                     BoatController boat = tile.GetOccupiedObject().GetComponentInParent<BoatController>();
-                    audioManager.Play("Attack");
+                    audioManager.Play("Success", 0.5f);
+                    GameObject explosion = Instantiate(ExplosionInstance);
+                    explosion.transform.position = tile.transform.position;
+                    Destroy(explosion, 5f);
                     if (boat.IsDestroyed())
                     {
-                        audioManager.Play("Destruction");
+                        audioManager.Play("Destruction", 0);
                         _enemyBoats.Remove(boat);
                         // Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject );
                     }
@@ -376,9 +429,13 @@ public class GameController : MonoBehaviour
                 }
                 else
                 {
-                    audioManager.Play("Miss");
+                    audioManager.Play("Miss", 0.5f);
+                    GameObject water = Instantiate(WaterSplashInstance);
+                    water.transform.position = tile.transform.position;
+                    Destroy(water, 5f);
                     tile.SetMarked(false);
-                    ChangeGameState(GameState.EnemyAttack);
+                    _playerCanAttack = false;
+                    return;
                 }
             }
             else
@@ -399,52 +456,58 @@ public class GameController : MonoBehaviour
 
     private void EnemyAttack()
     {
-        
-        // 0 empty, 1 hit, 2 boat
-        bool failed = true;
-
-        if (_hitCount > 50)
+        // GameOver
+        if (_placedBoats.Count == 0)
         {
-            for (int i = 0; i < 100; i++)
-            {
-                if (!failed)
-                {
-                    break;
-                }
-                int x = i / 10;
-                int y = i % 10;
-                if (playerBoardMatrix[x, y] != 1)
-                {
-                    if (EnemyAttackTile(x, y))
-                    {
-                        
-                        for (int j = 0; j < 4; j++)
-                        {
-                            int xx = x + (int) Mathf.Sin(Mathf.Deg2Rad * i * 90);
-                            int yy = y + (int) Mathf.Cos(Mathf.Deg2Rad * i * 90);
-                            if (playerBoardMatrix[xx, yy] != 1)
-                            {
-                                EnemyAttackTile(xx, yy);
-                                // This is getting weird
-                            }
-                        }
-                }
-                    else
-                    {
-                        failed = false;
-                    }
-                }
-            }
-            
-            
+            ChangeGameState(GameState.PlayerDefeat);
         }
         
-        while (failed)
+        
+        // 0 empty, 1 hit, 2 boat
+        _enemyCanAttack = true;
+
+        // if (_hitCount > 50)
+        // {
+        //     for (int i = 0; i < 100; i++)
+        //     {
+        //         if (!_enemyCanAttack)
+        //         {
+        //             break;
+        //         }
+        //         int x = i / 10;
+        //         int y = i % 10;
+        //         if (playerBoardMatrix[x, y] != 1)
+        //         {
+        //             if (EnemyAttackTile(x, y))
+        //             {
+        //                 
+        //                 for (int j = 0; j < 4; j++)
+        //                 {
+        //                     int xx = x + (int) Mathf.Sin(Mathf.Deg2Rad * i * 90);
+        //                     int yy = y + (int) Mathf.Cos(Mathf.Deg2Rad * i * 90);
+        //                     if (playerBoardMatrix[xx, yy] != 1)
+        //                     {
+        //                         EnemyAttackTile(xx, yy);
+        //                         // This is getting weird
+        //                     }
+        //                 }
+        //         }
+        //             else
+        //             {
+        //                 _enemyCanAttack = false;
+        //             }
+        //         }
+        //     }
+        //     
+        //     
+        // }
+        
+        while (_enemyCanAttack)
         {
             int a = (int) Mathf.Clamp(Random.value * 10, 0f, 9f);
             int b = (int) Mathf.Clamp(Random.value * 10, 0f, 9f);
 
-            failed = false;
+            _enemyCanAttack = false;
             if (playerBoardMatrix[a, b] == 1)
             {
                 
@@ -459,45 +522,52 @@ public class GameController : MonoBehaviour
                     if (tile.IsMarked())
                     {
                         playerBoardMatrix[a, b] = 1;
-                        failed = true;
+                        _enemyCanAttack = true;
                         print("ADD ERROR SOUND");
                         print("This tile is already clicked");
                         // audioManager.Play("Error");
                     }
                     else
                     {
+                        audioManager.Play("Attack", 0);             
                         GameObject occupiedObject = tile.GetOccupiedObject();
                         if (occupiedObject != null)
                         {
                             IHittable boatPiece = tile.GetOccupiedObject().GetComponentInChildren<IHittable>();
                             boatPiece.Hit();
                             BoatController boat = tile.GetOccupiedObject().GetComponentInParent<BoatController>();
-                            audioManager.Play("Attack");
+                            audioManager.Play("Success", 0.5f);
+                            GameObject explosion = Instantiate(ExplosionInstance);
+                            explosion.transform.position = tile.transform.position;
+                            Destroy(explosion, 5f);
                             if (boat.IsDestroyed())
                             {
-                                audioManager.Play("Destruction");
+                                audioManager.Play("Destruction", 0);
                                 _placedBoats.Remove(boat);
                                 // Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject );
                             }
                             tile.SetMarked(true);
                             playerBoardMatrix[a, b] = 2;
+                            _enemyCanAttack = true;
+                            return;
                         }
                         else
                         {
-                            audioManager.Play("Miss");
+                            audioManager.Play("Miss", 0.5f);
+                            GameObject water = Instantiate(WaterSplashInstance);
+                            water.transform.position = tile.transform.position;
+                            Destroy(water, 5f);
                             tile.SetMarked(false);
                             playerBoardMatrix[a, b] = 1;
-                            ChangeGameState(GameState.PlayerAttack);
+                            _enemyCanAttack = false;
+                            return;
                         }
                     }
                 }
             }
         }
         
-        if (_placedBoats.Count == 0)
-        {
-            ChangeGameState(GameState.PlayerDefeat);
-        }
+
     }
 
     public bool EnemyAttackTile(int a, int b)
@@ -509,15 +579,19 @@ public class GameController : MonoBehaviour
             TileTrigger tile = hit.collider.GetComponentInParent<TileTrigger>();
 
             GameObject occupiedObject = tile.GetOccupiedObject();
+            audioManager.Play("Attack", 0);
             if (occupiedObject != null)
             {
                 IHittable boatPiece = tile.GetOccupiedObject().GetComponentInChildren<IHittable>();
                 boatPiece.Hit();
                 BoatController boat = tile.GetOccupiedObject().GetComponentInParent<BoatController>();
-                audioManager.Play("Attack");
+                audioManager.Play("Success", 0.5f);
+                GameObject explosion = Instantiate(ExplosionInstance);
+                explosion.transform.position = tile.transform.position;
+                Destroy(explosion, 5f);
                 if (boat.IsDestroyed())
                 {
-                    audioManager.Play("Destruction");
+                    audioManager.Play("Destruction",0);
                     _placedBoats.Remove(boat);
                     // Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject );
                 }
@@ -527,7 +601,7 @@ public class GameController : MonoBehaviour
             }
             else
             {
-                audioManager.Play("Miss");
+                audioManager.Play("Miss", 0.5f);
                 tile.SetMarked(false);
                 playerBoardMatrix[a, b] = 1;
                 return false;

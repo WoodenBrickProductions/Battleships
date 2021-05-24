@@ -26,13 +26,16 @@ public class BoatController : MonoBehaviour, IHittable
     [SerializeField] private float frequency;
 
     //Explosion particle
-    [SerializeField] private GameObject explosionParticle;
-    
+    [SerializeField] private GameObject firingParticle;
+
+    private ParticleSystem cannonParticleSystem;
     private GameObject boat, destroyedBoat;
     private float randomOffset;
     
     void Start()
     {
+        firingParticle = gameObject.transform.GetChild(transform.childCount - 4).gameObject;
+        cannonParticleSystem = firingParticle.GetComponentInChildren<ParticleSystem>();
         _particles = gameObject.transform.GetChild(transform.childCount - 3).gameObject;
         //_particles = Resources.Load("/Prefabs/Particles/ExplosionParticle.prefab") as GameObject;
         randomOffset = Random.value;
@@ -57,6 +60,16 @@ public class BoatController : MonoBehaviour, IHittable
         boat.transform.position = currentPosition;
     }
 
+    public void RotateCannonToTarget(Vector3 direction)
+    {
+        firingParticle.transform.forward = direction.normalized;
+    }
+
+    public void FireCannons()
+    {
+        cannonParticleSystem.Emit(10);
+    }
+    
     private void OnTriggerEnter(Collider other)
     {
         //TODO Set state in Boat Controller for PositionTrigger
