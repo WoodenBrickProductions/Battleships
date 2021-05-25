@@ -107,7 +107,10 @@ public class GameController : MonoBehaviour
             case GameState.PlayerAttack:
                 if (_playerCanAttack)
                 {
-                    PlayerAttack();
+                    if (!cameraController.IsMoving())
+                    {
+                        PlayerAttack();
+                    }
                 }
                 else
                 {
@@ -510,7 +513,7 @@ public class GameController : MonoBehaviour
             _enemyCanAttack = false;
             if (playerBoardMatrix[a, b] == 1)
             {
-                
+                _enemyCanAttack = true;
             }
             else
             {

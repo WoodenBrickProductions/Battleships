@@ -19,6 +19,8 @@ public class CameraController : MonoBehaviour
     private float _distanceToLocation;
     private Vector3 _targetLocation;
     private float _factor;
+    private bool moving;
+    
     private void Start()
     {
         _targetLocation = setupBoardPosition;
@@ -44,7 +46,8 @@ public class CameraController : MonoBehaviour
         //     }
         // }
 
-        if (_targetLocation != transform.position)
+        // if (_targetLocation != transform.position)
+        if(moving && (_targetLocation - transform.position).sqrMagnitude >= 0.000001f)
         {
              _factor = (_distanceToLocation + _distanceToLocation * smoothing) / // Travel speed goes from 1 to 2 to 1
                            Math.Abs(_distanceToLocation/2 - (_targetLocation - transform.position).magnitude + _distanceToLocation * smoothing);
@@ -53,8 +56,17 @@ public class CameraController : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, _targetLocation, cameraSpeed * _factor * Time.deltaTime);
             print("Camera moving");
         }
+        else
+        {
+            moving = false;
+        }
     }
 
+    public bool IsMoving()
+    {
+        return moving;
+    }
+    
     public void ChangeCameraPosition(CameraPosition target)
     {
         switch (target)
@@ -70,5 +82,6 @@ public class CameraController : MonoBehaviour
                 break;
         }
         _distanceToLocation = (_targetLocation - transform.position).magnitude;
+        moving = true;
     }
 }
