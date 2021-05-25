@@ -4137,7 +4137,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: " Enemy ships:\n Detsroyed: 0\n Left: 10 "
+  m_Text: " Enemy ships:\n Destroyed: 0\n Left: 10 "
 --- !u!222 &716500524
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4773,9 +4773,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 591a824845212b748be51d30fc70d8c7, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 3af0efe8bd5fdf24cbc5d44b0afdf117, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.02
+  m_Volume: 0.08
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -5983,6 +5983,8 @@ MonoBehaviour:
   CannonFireTarget: {fileID: 1546277018}
   win: {fileID: 733476458}
   lose: {fileID: 1995483964}
+  playerInfo: {fileID: 1161026080}
+  enemyInfo: {fileID: 716500521}
   boatsGameObjects:
   - {fileID: 338944711}
   - {fileID: 983627718}

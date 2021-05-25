@@ -17,7 +17,12 @@ public class MenuController : MonoBehaviour
     {
         SceneManager.LoadScene(i);
     }
-    
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
     // Update is called once per frame
     void Update()
     {
