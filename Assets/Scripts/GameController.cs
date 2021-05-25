@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using DefaultNamespace;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public enum GameState
@@ -30,8 +31,16 @@ public class GameController : MonoBehaviour
     //UI
     [SerializeField] private GameObject win;
     [SerializeField] private GameObject lose;
+    [SerializeField] private GameObject playerInfo;
+    [SerializeField] private GameObject enemyInfo;
 
+    private Text playerText;
+    private Text enemyText;
 
+    private int playerShipStartCount = 10;
+    private int enemyShipStartCount = 10;
+
+    
     private float missTimerDefault = 1.5f;
     private float attackTimerDefault = 1.5f;
 
@@ -71,6 +80,9 @@ public class GameController : MonoBehaviour
         _enemyBoats = new List<BoatController>();
         _aiController = GetComponent<AIController>();
         playerBoardMatrix = new int[10, 10];
+        playerText = playerInfo.GetComponentInChildren<Text>();
+        enemyText = enemyInfo.GetComponentInChildren<Text>();
+
         print("Trying to make a boat");
         // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
         // FIX FIX FIX FIX FIX FIX FIX FIX FIX 
@@ -231,6 +243,8 @@ public class GameController : MonoBehaviour
         if (_placedBoats.Count == 10 || Input.GetKeyDown(KeyCode.Space))
         {
             CalculatePlayerBoardMatrix();
+            playerShipStartCount = _placedBoats.Count;
+            SetPlayerShipsLeft(playerShipStartCount);
             ChangeGameState(GameState.EnemyBoardPlacement);
         }
         
@@ -429,6 +443,7 @@ public class GameController : MonoBehaviour
                     {
                         audioManager.Play("Destruction", 0);
                         _enemyBoats.Remove(boat);
+                        SetEnemyShipsLeft(_enemyBoats.Count);
                         // Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject );
                     }
                     tile.SetMarked(true);
@@ -550,6 +565,7 @@ public class GameController : MonoBehaviour
                             {
                                 audioManager.Play("Destruction", 0);
                                 _placedBoats.Remove(boat);
+                                SetPlayerShipsLeft(_placedBoats.Count);
                                 // Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject );
                             }
                             tile.SetMarked(true);
@@ -599,6 +615,7 @@ public class GameController : MonoBehaviour
                 {
                     audioManager.Play("Destruction",0);
                     _placedBoats.Remove(boat);
+                    SetPlayerShipsLeft(_placedBoats.Count);
                     // Destroy(hit.collider.GetComponentInParent<BoatController>().gameObject );
                 }
                 tile.SetMarked(true);
@@ -656,4 +673,44 @@ public class GameController : MonoBehaviour
             return ray.GetPoint(distance);
         return new Vector3();
     }
+    
+    // UI manipulation
+
+    // Your ships:
+    // Destroyed: 0
+    // Left: 10
+    
+    private void SetPlayerShipsLeft(int count)
+    {
+        playerText.text = "Your ships:" + "\r\n" +
+                          "Destroyed: " + (playerShipStartCount - count) + "\r\n" +
+                          "Left: " + count;
+    }
+
+
+    
+    // private void SetPlayerShipsDestroyed(int count)
+    // {
+    //     playerText.text = "Your ships:" + "\r\n" +
+    //                       "Destroyed: " + count + "\r\n" +
+    //                       "Left: " + (playerShipStartCount - count);
+    // }
+
+    
+    // Enemy ships:
+    // Destroyed: 0
+    // Left: 10 
+    private void SetEnemyShipsLeft(int count)
+    {
+        enemyText.text = "Enemy ships:" + "\r\n" +
+                          "Destroyed: " + (enemyShipStartCount - count) + "\r\n" +
+                          "Left: " + count;
+    }
+
+    // private void SetEnemyShipsDestroyed(int count)
+    // {
+    //     enemyText.text = "Enemy ships:" + "\r\n" +
+    //                       "Destroyed: " + count + "\r\n" +
+    //                       "Left: " + (enemyShipStartCount - count);
+    // }
 }
