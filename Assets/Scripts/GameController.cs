@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 using DefaultNamespace;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.WSA;
 using Random = UnityEngine.Random;
 
 public enum GameState
@@ -163,19 +162,23 @@ public class GameController : MonoBehaviour
                 break;
         }
 
-        //
-        // // Temporary
-        // if (Input.GetKeyDown(KeyCode.D))
-        // {
-        //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        //     RaycastHit hit;
-        //     if (Physics.Raycast(ray, out hit, Mathf.Infinity, _selectableLayerMask))
-        //     {
-        //         audioManager.Play("Destruction");
-        //         Destroy(hit.collider.gameObject);
-        //     }
-        //
-        // }
+        
+        // Temporary
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            ChangeGameState(GameState.PlayerWin);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            ChangeGameState(GameState.PlayerDefeat);
+        }
+
     }
 
     
@@ -198,8 +201,8 @@ public class GameController : MonoBehaviour
             print("DEFEAT");
             audioManager.Play("Gameover", 0);
             lose.SetActive(true);
-            Invoke(nameof(GoToMenu), 3f);
-            _gameOver = false;
+            Invoke(nameof(GoToMenu), 4f);
+            _gameOver = true;
         }
     }
     
